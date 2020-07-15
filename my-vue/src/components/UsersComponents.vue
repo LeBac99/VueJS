@@ -5,8 +5,8 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">Name</th>
-      <th scope="col">Image</th>
-      <th scope="col">detail</th>
+      <th scope="col">Email</th>
+      <th scope="col">Permission</th>
       <th scope="col">
         <p><router-link :to="{ name: 'AddUser' }" class="btn btn-primary">Add new</router-link></p>
       </th>
@@ -17,12 +17,19 @@
       <th scope="row">{{ user.id }}</th>
       <td>{{ user.name }}</td>
       <td>
-        <img v-bind:src="user.image" alt="" width="300px">
+        {{ user.email }}
       </td>
-      <td>{{ user.detail }}</td>
+      <td>
+          <p v-if="user.role_id == 5">
+            Admin
+          </p>
+          <p v-else>
+            Member
+          </p>
+      </td>
       <td>
         
-        <router-link :to="{name: 'EditUser', params: { id: user.id }}" class="btn btn-success">Edit</router-link>
+        <router-link :to="{name: 'AddUser', params: { id: user.id }}" class="btn btn-success">Edit</router-link>
           <button class="btn btn-danger" v-on:click="deleteUser(user.id)">Delete</button>
       </td>
     </tr>
@@ -40,22 +47,22 @@ export default {
   },
   methods :{
    deleteUser:function(id){
-    this.$http.delete('http://5d4849902d59e50014f20a3b.mockapi.io/product/' + id, {
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    }
-                }).then((response) => {
-                    window.location.reload();
-                    alert ('Delete User');   
-                }, (response) => {
-                 
-                });
+    var app =  this;
+    app.axios.delete('http://5d4849902d59e50014f20a3b.mockapi.io/product/' + id, {
+         headers : {
+        'Content-Type' : 'application/json'
+        }
+       }).then((response) => {
+        window.location.reload();
+      alert ('Delete User');   
+     }, (response) => {             
+     });
    }
   },
   mounted(){
 
     var app =  this;
-    app.$http.get(this.$apiURI).then(function(resp){
+    app.axios.get(this.$apiURI).then(function(resp){
       app.users = resp.data;
     })
     .catch(function(resp){

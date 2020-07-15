@@ -8,6 +8,7 @@ import EditUser from '@/components/EditUserComponents'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     // {
     //   path: '/',
@@ -20,10 +21,11 @@ export default new Router({
       component: Users
     },
     {
-      path: '/Add-user',
+      path: '/Add-user/:id',
       name: 'AddUser',
       component: AddUser
     },
+
     {
       path: '/Edit-user/:id',
       name: 'EditUser',

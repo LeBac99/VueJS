@@ -9,7 +9,6 @@ import { apply } from 'file-loader'
 
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
-
 Vue.prototype.$apiURI = 'http://localhost/api/user/'
 /* eslint-disable no-new */
 new Vue({

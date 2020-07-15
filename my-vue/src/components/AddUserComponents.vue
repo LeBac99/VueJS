@@ -1,47 +1,40 @@
 <template>
   <div id="create-User">
-    <h1>Create User</h1>
+    <div class="bar">
+      <p>Add-user</p>
+    </div>
     <form v-on:submit.prevent="addUser">
-      <p v-if="errors.length">
-    <b>Please correct the following error(s):</b>
-    <ul>
-      <li v-for="error in errors" :key="error">{{ error }}</li>
-    </ul>
-  </p>
-      <div class="form-group row">
-        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="inputPassword"
-            value="email@example.com"
-            v-model="user.name"
-          />
+       <div class="alert alert-danger" v-if="errors.length" role="alert">
+              <p v-for="error in errors" :key="error">{{ error }}</p>
         </div>
-      </div>
-      <div class="form-group row">
-        <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
-        <div class="col-sm-10">
-          <input
-            type="text"
-            class="form-control"
-            id="inputPassword"
-            placeholder="detail"
-            v-model="user.detail"
-          />
-        </div>
+      <div class="form-group">
+          <label for="exampleInputEmail1">Name</label>
+          <input type="text" class="form-control" id="exampleInputEmail1" v-model="user.name" aria-describedby="emailHelp" placeholder="Enter name">
       </div>
       <div class="form-group">
-        <button class="btn btn-primary">Create</button>
-        <button class="btn btn-danger"><router-link :to="{ name: 'Users' }" style="color:#fff">Return to Users</router-link></button>
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="text" class="form-control" id="exampleInputEmail1" v-model="user.email" aria-describedby="emailHelp" placeholder="Enter email">
       </div>
+      <div class="form-group">
+          <label for="exampleInputPassword1">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" v-model="user.password" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <label for="exampleFormControlSelect1" >Permission</label>
+        <select class="form-control" v-model="user.role_id" id="exampleFormControlSelect1" aria-placeholder="Permission">
+            <option value="1">Member</option>
+            <option value="5">Admin</option>
+        </select>
+      </div>
+        <div class="form-group">
+          <button class="btn btn-primary">Create</button>
+          <router-link :to="{ name: 'Users' }" class="btn btn-danger" style="color:#fff">Return to Users</router-link>
+        </div>
     </form>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -49,32 +42,66 @@ export default {
       errors:[]
     };
   },
+  created: function(){
+      this.getUser();
+  },
   methods: {
+     getUser: function(){
+        if(this.$route.params.id){
+        let Api = this.$apiURI
+         this.axios.get(Api + this.$route.params.id).then((response)=>{
+             this.user = response.data;
+              console.log(this.user);
+         }, (response)=>{
+
+         });
+        } else{
+            //  this.user = null;
+        }
+    },
     addUser: function() {
       // console.log(this.user);
-      if (!this.user.name) {
-        this.errors.push('Name required.');
-      } else {
-      let Api = this.$apiURI + 'create';
-      // console.log('Api=',Api);
-      this.$http.post(Api, this.user, {
-                    headers : {
-                        'Content-Type' : 'application/json'
-                    }
-                }).then(
+      if(this.$route.params.id){
+         let Api = this.$apiURI
+         this.axios.put(Api+ this.$route.params.id, this.user).then(
           response => {
-             this.$router.back();
+            // alert('success');
+            this.$router.back();
+              console.log(response.data);
           },
           response => {
-          this.errors.push('khong them dk');
+            alert('error');
           }
         );
-
-      }
+      }else{
+          let Api = this.$apiURI + 'add-user';
+          this.axios.post(Api, this.user).then(
+            response => {
+              alert('success');
+              this.$router.back();
+              console.log('users=',response.data);
+          },
+          response => {
+            alert('error');
+            length
+          });
+          }
+        }
     }
-  },
+     
 };
 </script>
 
 <style>
+.bar{
+  width: 100%;
+  height: 30px;
+  border: 1px solid black;
+  font-size: 20px;
+  color: darkgreen;
+  background-color: darkgrey;
+}
+form{
+  margin-top: 20px;
+}
 </style>
