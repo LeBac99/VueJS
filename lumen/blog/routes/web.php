@@ -19,12 +19,12 @@ $router->get('foo', function () {
 });
 $router->group(['prefix'=>'api'],function($router){
     $router->get('user','UserController@showIndex');
-    $router->post('user/search','UserController@Search');
-    $router->post('user/add-user','UserController@SaveAddNew');
+    $router->get('user/search/{key}','UserController@search');
+    $router->post('user/add-user','UserController@saveAddNew');
  
     $router->get('user/{id}','UserController@showIndexUser');
-    $router->put('user/{id}','UserController@SaveEditUser');
-    // $router->delete('user/{id}','UserController@DeleteUser');
+    $router->put('user/{id}','UserController@saveEditUser');
+    $router->delete('user/delete-user/{id}','UserController@deleteUser');
 
     $router->post('login','UserController@login');
     //product

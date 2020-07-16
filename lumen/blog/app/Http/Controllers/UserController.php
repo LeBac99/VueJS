@@ -25,47 +25,58 @@ class UserController extends Controller
 
         return response()->json(User::all());
     }
-    public function Search(Request $request){
-        if (!$request->has('key') || empty($request->key)) {
-            
-            $users = User::all();
-
-        } else {
-            $kw = $request->key;
-            $users = User::where('name', 'like', "%$kw%")
-                ->paginate(5);
-            $users->withPath("?keyword=$kw");
-            
-        }
-        return response()->json($users);
+    public function search($key){
         
-    }
-    public function SaveAddNew(Request $r){ 
-            $user = new User();
-            $user->name=$r->name;
-            $user->password= password_hash($r->password, PASSWORD_DEFAULT);     
-            $user->email=$r->email;
-            $user->role_id=$r->role_id;
-            $user->save();
 
-            return ('success');
+            $kw = $key;
+            $users = User::where('name', 'like', "%$kw%")
+            ->paginate(5);
+              $users->withPath("?keyword=$kw");
+         return response()->json($users);
+    }
+    public function saveAddNew(Request $r){
+
+        $this->validate($r, [
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+         ]);
+        $user = new User();
+        $user->name=$r->name;    
+        $user->email=$r->email;
+        $user->password= password_hash($r->password, PASSWORD_DEFAULT); 
+        $user->role_id=$r->role_id;
+        $user->save();
+        return ('success');
     }
     public function showIndexUser($id){
         // dd($id);
-      return response()->json(User::find($id));
+      return response()->json(User::findOrFail($id));
     }
-    public function SaveEditUser(Request $request,$id){
-        $user= User::find($id);
-        $user->update($request->all());
-        return response()->json($user);
+    public function saveEditUser(Request $request,$id){
+        if (isset($id)) {
+            $this->validate($request, [
+                'name' => 'required|max:255',
+                'email' => 'required|unique:users,email,' .$id,
+               
+            ]);
+            $user= User::find($id);
+            $user->update($request->all());
+
+            return response()->json($user);
+        };
+        return response('error');
     }
+    
+    public function deleteUser($id){
+        $user= User::destroy($id);
+        return ('success');
+    }
+
+
     public function login(){
         
        return response()->json(User::all()); 
-    }
-    public function DeleteUser($id){
-        $user= User::destroy($id);
-        return response()->json($user);
     }
     public function password(Request $request){
         $email= User::where('email',$request->email)->first();

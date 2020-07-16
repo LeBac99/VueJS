@@ -17,6 +17,7 @@
     "axios": "^0.19.2",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.5",
+    "vue-confirm-dialog": "^1.0.2",
     "vue-plain-pagination": "^0.3.0",
     "vue-router": "^3.0.1"
   },

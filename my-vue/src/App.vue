@@ -3,6 +3,7 @@
     <div class="container">
     <comp-header/>
     <comp-baner/>
+    <vue-confirm-dialog></vue-confirm-dialog>
     <router-view/>
     <comp-footer/>
     </div>
