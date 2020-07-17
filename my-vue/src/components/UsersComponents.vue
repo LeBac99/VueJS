@@ -8,11 +8,11 @@
           placeholder="Search"
           aria-label="Search"
           v-model="key"
-          @keyup = "search"
+          v-on:change="search"
         />
       </nav>
     </div>
-    <thead v-if="users">
+    <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
@@ -27,7 +27,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(user, index) in users" :key="index">
+      <tr v-for="user in users" :key="user.id">
         <!-- <th scope="row">{{ user.id }}</th> -->
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
@@ -40,8 +40,15 @@
           <button class="btn btn-danger" v-on:click="deleteUser(user.id)">Delete</button>
         </td>
       </tr>
+      <div class="alert alert-errors" v-if="errors">
+        <strong>Danger!</strong>
+        {{errors}}.
+      </div>
     </tbody>
-   
+    <!-- credits -->
+    <div class="card-footer pb-0 pt-3">
+      <jw-pagination :items="users" @changePage="onChangePage"></jw-pagination>
+    </div>
   </table>
 </template>
 <script>
@@ -49,7 +56,8 @@ export default {
   data: function() {
     return {
       users: [],
-      key: ""
+      key: "",
+      errors: ""
     };
   },
   methods: {
@@ -76,31 +84,46 @@ export default {
       });
     },
     search: function() {
-    console.log(this.key, 'keeeeyey');
-    var that = this;
-    this.axios
-      .get(that.$apiURI + 'search/' + that.key)
-      .then(function(resp) {
-        console.log(resp.data, 6666666666, 'dddd', typeof resp.data);
-          that.users = resp.data;
-          console.log('fffffff', that.users);
-
-      });
+      var that = this;
+      if(that.key == ''){
+           window.location.reload();
+      }
+      this.axios
+        .get(that.$apiURI + "search/" + that.key)
+        .then(function(resp) {
+          that.users = Array.from(resp.data);
+          that.errors = resp.data.MESSAGE;
+          console.log("111", that.errors);
+        })
+        .catch(error => {
+            // this.users = error.response.data;   
+        });
+    },
+    onChangePage(pageOfItems) {
+      // update page of items
+      console.log('bac',pageOfItems);
+      // this.users = pageOfItems;
     }
   },
   mounted() {
-    var app = this;
-    app.axios
+    this.axios
       .get(this.$apiURI)
-      .then(function(resp) {
-        app.users = resp.data;
+      .then(resp => {
+        this.users = resp.data;
       })
       .catch(function(resp) {
         alert("Could not load users");
       });
-  }
+    }
 };
 </script>
 
 <style>
+a {
+  cursor: pointer;
+}
+.pagination {
+  justify-content: center;
+  flex-wrap: wrap;
+}
 </style>

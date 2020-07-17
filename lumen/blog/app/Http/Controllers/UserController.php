@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-      
+        $this->middleware('auth');
     }
 
     public function showIndex(Request $request)
@@ -26,13 +26,21 @@ class UserController extends Controller
         return response()->json(User::all());
     }
     public function search($key){
-        
-
-            $kw = $key;
-            $users = User::where('name', 'like', "%$kw%")
-            ->paginate(5);
-              $users->withPath("?keyword=$kw");
+        $kw = $key;
+        if(empty($key)){
+            $users = User::all();
+        }
+        $users = User::where('name', 'like', "%$kw%")
+        ->get();
+        if(count($users)){
+            return response()->json($users);
+        }else{
+             return response()->json(['MESSAGE' =>'No Data'], 200);
+        }
          return response()->json($users);
+
+        
+        
     }
     public function saveAddNew(Request $r){
 
@@ -41,13 +49,13 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
          ]);
-        $user = new User();
-        $user->name=$r->name;    
-        $user->email=$r->email;
-        $user->password= password_hash($r->password, PASSWORD_DEFAULT); 
-        $user->role_id=$r->role_id;
-        $user->save();
-        return ('success');
+        $user = User::create([
+             'name'=>$r->name,    
+             'email'=>$r->email,
+             'password'=> password_hash($r->password, PASSWORD_DEFAULT), 
+             'role_id'=>$r->role_id
+        ]);
+        return response()->json(['MESSAGE' =>'Create user '], 200);
     }
     public function showIndexUser($id){
         // dd($id);

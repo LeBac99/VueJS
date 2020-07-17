@@ -14,10 +14,9 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
-$router->get('foo', function () {
-    return 'Hello World';
-});
+
 $router->group(['prefix'=>'api'],function($router){
+
     $router->get('user','UserController@showIndex');
     $router->get('user/search/{key}','UserController@search');
     $router->post('user/add-user','UserController@saveAddNew');
@@ -36,7 +35,10 @@ $router->group(['prefix'=>'api'],function($router){
     $router->get('save-password/{token}','UserController@getpassword');
     $router->put('save-password/{token}','UserController@savepassword');
     //login
-    $router->post('cp-login',['middleware'=>'checkLogin','uses'=>'LoginController@postLogin']);   
+    $router->post('register','LoginController@register');
+    $router->post('cp-login','LoginController@postLogin');
+
+  
 });
 
 

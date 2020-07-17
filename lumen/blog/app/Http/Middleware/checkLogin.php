@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\User;
-
+use App\Models\User;
+// use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Auth;
 
 class CheckLogin
 { 
@@ -19,12 +19,10 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
-        
-        $user = User::where('email',$request->input('email'))->first();
 
-        if($user && Hash::check($request->input('password'), $user->password)) {
+         if(Auth::check() && Auth::user()->role_id > 5 ){
             return $next($request);
-        }
+        }else
         return response(['error'=>['Unauthorized.']], 401);
     }
 }

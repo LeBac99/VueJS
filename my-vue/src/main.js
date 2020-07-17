@@ -6,11 +6,13 @@ import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueConfirmDialog from 'vue-confirm-dialog'
+import JwPagination from 'jw-vue-pagination';
+Vue.component('jw-pagination', JwPagination);
 Vue.use(VueConfirmDialog)
 Vue.component('vue-confirm-dialog', VueConfirmDialog.default)
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
-var $url= String
+
 Vue.prototype.$apiURI = 'http://localhost/api/user/'
 /* eslint-disable no-new */
 class Errors {

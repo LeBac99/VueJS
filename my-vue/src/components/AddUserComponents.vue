@@ -104,9 +104,7 @@ export default {
         this.axios
           .post(Api, this.user)
           .then(response => {
-            alert("success");
             this.$router.back();
-            console.log("users=", response.data);
           })
           .catch(error => {
             this.errors = error.response.data;
